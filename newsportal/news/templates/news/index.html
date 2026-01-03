@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>News Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f4f4;
+        }
+
+        header {
+            background: #1e1e2f;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            flex-wrap: wrap;
+            background: white;
+        }
+
+        .controls button {
+            padding: 8px 15px;
+            border: none;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .controls button:hover {
+            background: #0056b3;
+        }
+
+        .controls input {
+            padding: 8px;
+            width: 250px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .news-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .card h3 {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .card p {
+            font-size: 14px;
+            color: #444;
+        }
+
+        .card a {
+            display: inline-block;
+            margin-top: 10px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .category {
+            font-size: 12px;
+            color: white;
+            background: #28a745;
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>📰 News Portal</h1>
+    <p>Latest news in real time</p>
+</header>
+
+<div class="controls">
+    <button onclick="loadNews('all')">All</button>
+    <button onclick="loadNews('politics')">Politics</button>
+    <button onclick="loadNews('sports')">Sports</button>
+    <button onclick="loadNews('technology')">Technology</button>
+    <button onclick="loadNews('business')">Business</button>
+    <button onclick="loadNews('entertainment')">Entertainment</button>
+    <button onclick="refreshNews()">Refresh News</button>
+
+
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="Search news..."
+        onkeyup="searchNews()"
+    >
+</div>
+
+<div class="news-container" id="newsContainer">
+    Loading news...
+</div>
+
+<script>
+    let currentCategory = "all";
+
+    function loadNews(category = "all") {
+        currentCategory = category;
+        fetch(`/api/news/?category=${category}`)
+            .then(response => response.json())
+            .then(data => renderNews(data))
+            .catch(err => console.error(err));
+    }
+
+    function searchNews() {
+        const query = document.getElementById("searchInput").value;
+        fetch(`/api/news/?search=${query}&category=${currentCategory}`)
+            .then(response => response.json())
+            .then(data => renderNews(data));
+    }
+    function refreshNews() {
+    fetch("/api/refresh/")
+        .then(res => res.json())
+        .then(data => {
+            alert("News refreshed!");
+            loadNews(currentCategory);
+        });
+}
+
+
+    function renderNews(articles) {
+        const container = document.getElementById("newsContainer");
+        container.innerHTML = "";
+
+        if (articles.length === 0) {
+            container.innerHTML = "<p>No news found.</p>";
+            return;
+        }
+
+        articles.forEach(article => {
+            const card = document.createElement("div");
+            card.className = "card";
+
+            card.innerHTML = `
+                ${article.image ? `<img src="${article.image}" alt="">` : ""}
+                <div class="category">${article.category}</div>
+                <h3>${article.title}</h3>
+                <p>${article.description || ""}</p>
+                <a href="${article.url}" target="_blank">Read more →</a>
+            `;
+
+            container.appendChild(card);
+        });
+    }
+
+    // Auto refresh every 60 seconds
+    setInterval(() => {
+        loadNews(currentCategory);
+    }, 60000);
+
+    // Initial load
+    loadNews();
+</script>
+
+</body>
+</html>
