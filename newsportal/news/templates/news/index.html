@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>News Portal</title>
+    <title>NewsFlow</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -10,12 +10,37 @@
             background: #f4f4f4;
         }
 
-        header {
-            background: #1e1e2f;
-            color: white;
-            padding: 15px;
-            text-align: center;
-        }
+         .hero {
+    height: 200px;
+    background-image: url("https://images.stockcake.com/public/8/7/5/875bf857-9024-439a-a84c-4dc181aadae3_large/ringed-earth-glows-stockcake.jpg");
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+        .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:  rgba(0, 0, 0, 0.55);
+    }
+         .hero h1 {
+    position: relative;
+    color: #fff;
+    font-size: 3rem;
+    letter-spacing: 2px;
+    z-index: 1;
+    }
+
+         .hero p {
+    position: relative;
+    color: #ddd;
+    margin-top: 10px;
+    text-align: center;
+    z-index: 1;
+    }
 
         .controls {
             display: flex;
@@ -29,14 +54,16 @@
         .controls button {
             padding: 8px 15px;
             border: none;
-            background: #007bff;
+            background: #10a2d2ff;
             color: white;
             cursor: pointer;
             border-radius: 4px;
+            transition: all 0.3s ease;
         }
 
         .controls button:hover {
             background: #0056b3;
+            transform: translateY(-2px);
         }
 
         .controls input {
@@ -98,10 +125,10 @@
 </head>
 <body>
 
-<header>
-    <h1>📰 News Portal</h1>
-    <p>Latest news in real time</p>
-</header>
+<div class="hero">
+    <h1>NewsFlow</h1>
+    <p>Real time updates around the world</p>
+</div>
 
 <div class="controls">
     <button onclick="loadNews('all')">All</button>
